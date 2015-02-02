@@ -35,7 +35,14 @@ qplot(headache.log$plot.date,
       ylab = "Pain Level")
 
 #Trying to replicate with ggvis
-df %>% ggvis(~plot.date, ~pain) %>% layer_points()
+df %>% 
+  ggvis(~plot.date, ~pain, fill = ~factor(midEnd)) %>% 
+  layer_points() %>% 
+  group_by(midEnd) %>% 
+  layer_smooths(
+    stroke = ~factor(midEnd), 
+    span = input_slider(0.2, 1),
+    se = TRUE)
 
 #Plot Relative Pain Frequencies
 barplot(table(head.log$pain)/length(head.log$pain))
