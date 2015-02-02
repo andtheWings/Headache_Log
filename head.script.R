@@ -3,15 +3,16 @@ library(ggplot2)
 library(lubridate)
 library(dplyr)
 library(reshape2)
+library(ggvis)
 
 #Input Headache Data
 df = read.csv("headache.log.csv")
 
 #Make dataframe for number of days exercising per month
-dfexercise = dcast (headache.log, month ~ exercise)
+dfexercise = dcast (df, month ~ exercise)
 
 #Make dataframe for number of days with end pain above 6 per month
-dfhighpain = filter(headache.log, midEnd == "end") %>% filter(pain > 6) %>% count(month)
+dfhighpain = filter(df, midEnd == "end") %>% filter(pain > 6) %>% count(month)
 
 #Put new dataframes together
 dfactivepain = full_join(dfexercise, dfhighpain, by = "month")
@@ -20,7 +21,7 @@ dfactivepain = full_join(dfexercise, dfhighpain, by = "month")
 dfactivepain$painVexercise = dfactivepain[,5]/dfactivepain[,3]
 
 #Convert Time to Play Nice
-headache.log$plot.date = mdy_hms(headache.log$date)
+df$plot.date = mdy_hms(df$date)
 
 #Plot Pain Over Time
 qplot(headache.log$plot.date, 
@@ -32,6 +33,9 @@ qplot(headache.log$plot.date,
       ylim = c(0,10),
       xlab = "Time",
       ylab = "Pain Level")
+
+#Trying to replicate with ggvis
+df %>% ggvis(~plot.date, ~pain) %>% layer_points()
 
 #Plot Relative Pain Frequencies
 barplot(table(head.log$pain)/length(head.log$pain))
