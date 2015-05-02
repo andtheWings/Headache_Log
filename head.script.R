@@ -24,10 +24,9 @@ dfactivepain$painVexercise = dfactivepain[,5]/dfactivepain[,3]
 df$plot.date = mdy_hms(df$date)
 
 #Plot Pain Over Time
-qplot(headache.log$plot.date, 
-      headache.log$pain, 
-      colour = headache.log$midEnd,
-      shape = headache.log$midEnd,
+qplot(df$plot.date, df$pain, 
+      colour = df$midEnd,
+      shape = df$midEnd,
       geom = c("point", 
                "smooth"),
       ylim = c(0,10),
