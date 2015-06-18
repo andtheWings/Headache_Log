@@ -1,4 +1,4 @@
-#Load needed packages
+#Load needed libraries
 library(ggplot2)
 library(lubridate)
 library(dplyr)
@@ -7,6 +7,7 @@ library(ggvis)
 
 #Input Headache Data
 df = read.csv("headache.log.csv")
+df$month = as.character(df$month)
 
 #Make dataframe for number of days exercising per month
 dfexercise = dcast (df, month ~ exercise)
@@ -21,12 +22,13 @@ dfactivepain = full_join(dfexercise, dfhighpain, by = "month")
 dfactivepain$painVexercise = dfactivepain[,5]/dfactivepain[,3]
 
 #Convert Time to Play Nice
-df$plot.date = mdy_hms(df$date)
+df$plot_date = mdy_hms(df$date)
 
 #Plot Pain Over Time
+Time_of_Day <- df$midEnd 
 qplot(df$plot.date, df$pain, 
-      colour = df$midEnd,
-      shape = df$midEnd,
+      colour = Time_of_Day,
+      shape = Time_of_Day,
       geom = c("point", 
                "smooth"),
       ylim = c(0,10),
@@ -44,17 +46,14 @@ df %>%
     se = TRUE)
 
 #Plot Relative Pain Frequencies
-barplot(table(head.log$pain)/length(head.log$pain))
+barplot(table(df$pain)/length(df$pain), legend=df$month)
 
 #Independent 2-group t Tests
-t.test(pain~bump, data=headache.log)
-t.test(pain~exercise, data=headache.log) 
-t.test(pain~sleep, data=headache.log) 
-t.test(pain~stress, data=headache.log) 
-t.test(pain~vidgames, data=headache.log) 
-t.test(pain~driving, data=headache.log) 
-t.test(pain~bike, data=headache.log) 
-t.test(pain~hotcold, data=headache.log) 
-t.test(pain~screen, data=headache.log)
-summary(aov(pain ~ caffeine, data=headache.log))
-summary(aov(pain ~ alcohol))
+t.test(pain~bump, data=df)
+t.test(pain~exercise, data=df) 
+t.test(pain~lessthanfive, data=df) 
+t.test(pain~stress, data=df) 
+t.test(pain~run, data=df) 
+t.test(pain~strength, data=df) 
+summary(aov(pain ~ caffeine, data=df))
+summary(aov(pain ~ alcohol, data=df))
